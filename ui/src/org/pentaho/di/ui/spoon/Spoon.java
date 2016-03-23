@@ -8756,6 +8756,10 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
     delegates.jobs.addJobGraph( jobMeta );
   }
 
+  public boolean addJavaFxBrowser( String name, String url ) {
+    return delegates.tabs.addJavaFxBrowser( name, url );
+  }
+
   public boolean addSpoonBrowser( String name, String urlString, LocationListener locationListener, boolean showControls ) {
     return delegates.tabs.addSpoonBrowser( name, urlString, locationListener, showControls );
   }
@@ -8765,7 +8769,8 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
   }
 
   public boolean addSpoonBrowser( String name, String urlString, boolean showControls ) {
-    return delegates.tabs.addSpoonBrowser( name, urlString, null, showControls );
+    return addJavaFxBrowser( name, urlString );
+//    return delegates.tabs.addSpoonBrowser( name, urlString, null, showControls );
   }
 
   public boolean addSpoonBrowser( String name, String urlString ) {

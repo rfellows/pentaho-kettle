@@ -47,10 +47,7 @@ import org.pentaho.di.repository.RepositoryOperation;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.ui.core.gui.GUIResource;
 import org.pentaho.di.ui.repository.RepositorySecurityUI;
-import org.pentaho.di.ui.spoon.Spoon;
-import org.pentaho.di.ui.spoon.SpoonBrowser;
-import org.pentaho.di.ui.spoon.TabItemInterface;
-import org.pentaho.di.ui.spoon.TabMapEntry;
+import org.pentaho.di.ui.spoon.*;
 import org.pentaho.di.ui.spoon.TabMapEntry.ObjectType;
 import org.pentaho.di.ui.spoon.job.JobGraph;
 import org.pentaho.di.ui.spoon.trans.TransGraph;
@@ -262,6 +259,47 @@ public class SpoonTabsDelegate extends SpoonDelegate {
         Status status = Launch.openURL( urlString );
         ok = status.equals( Status.Success );
       }
+      if ( !ok ) {
+        // Log an error
+        //
+        log.logError( "Unable to open browser tab", e );
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }
+
+  public boolean addJavaFxBrowser( String name, String url ) {
+    TabSet tabfolder = spoon.tabfolder;
+
+    try {
+      TabMapEntry tabMapEntry = findTabMapEntry( name, ObjectType.BROWSER );
+      if ( tabMapEntry == null ) {
+        CTabFolder cTabFolder = tabfolder.getSwtTabset();
+        TabItem tabItem = new TabItem( tabfolder, name, name );
+        tabItem.setImage( GUIResource.getInstance().getImageLogoSmall() );
+
+        SpoonJavaFxBrowser browser = new SpoonJavaFxBrowser( cTabFolder );
+        browser.setUrl( url );
+        tabItem.setControl( browser.getControl() );
+
+        tabMapEntry =
+            new TabMapEntry( tabItem, url, name, null, null, browser, ObjectType.BROWSER );
+        tabMap.add( tabMapEntry );
+      }
+      int idx = tabfolder.indexOf( tabMapEntry.getTabItem() );
+
+      // keep the focus on the graph
+      tabfolder.setSelected( idx );
+      return true;
+    } catch ( Throwable e ) {
+      boolean ok = false;
+      // Retry to show the welcome page in an external browser.
+      //
+      Status status = Launch.openURL( url );
+      ok = status.equals( Status.Success );
+
       if ( !ok ) {
         // Log an error
         //

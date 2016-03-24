@@ -24,7 +24,7 @@ export LIBOVERLAY_SCROLLBAR=0
 # Bug in: https://bugs.launchpad.net/ubuntu/+source/unity-gtk-module/+bug/1208019
 export UBUNTU_MENUPROXY=0
 
-# Supposed spoon.sh and set-env.sh files both are located in data-integration folder  
+# Supposed spoon.sh and set-env.sh files both are located in data-integration folder
 # **************************************************
 # ** Set INITIALDIR, BASEDIR AND CURRENTDIR       **
 # **************************************************
@@ -51,7 +51,7 @@ else
 	cd "$BASEDIR"
 fi
 
-case `uname -s` in 
+case `uname -s` in
 	AIX)
 	ARCH=`uname -m`
 		case $ARCH in
@@ -64,13 +64,13 @@ case `uname -s` in
 				LIBPATH=$CURRENTDIR/../libswt/aix64/
 				;;
 
-			*)	
+			*)
 				echo "I'm sorry, this AIX platform [$ARCH] is not yet supported!"
 				exit
 				;;
 		esac
 		;;
-	SunOS) 
+	SunOS)
 	ARCH=`uname -m`
 		case $ARCH in
 
@@ -78,7 +78,7 @@ case `uname -s` in
 				LIBPATH=$CURRENTDIR/../libswt/solaris-x86/
 				;;
 
-			*)	
+			*)
 				LIBPATH=$CURRENTDIR/../libswt/solaris/
 				;;
 		esac
@@ -103,7 +103,7 @@ case `uname -s` in
 			LIBPATH=$CURRENTDIR/../libswt/osx/
 			;;
 
-		*)	
+		*)
 			echo "I'm sorry, this Mac platform [$ARCH] is not yet supported!"
 			echo "Please try starting using 'Data Integration 32-bit' or"
 			echo "'Data Integration 64-bit' as appropriate."
@@ -137,7 +137,7 @@ case `uname -s` in
 				LIBPATH=$CURRENTDIR/../libswt/linux/ppc64/
 				;;
 
-			*)	
+			*)
 				echo "I'm sorry, this Linux platform [$ARCH] is not yet supported!"
 				exit
 				;;
@@ -165,14 +165,14 @@ case `uname -s` in
 				exit
 				;;
 
-			*)	
+			*)
 				echo "I'm sorry, this FreeBSD platform [$ARCH] is not yet supported!"
 				exit
 				;;
 		esac
 		;;
 
-	HP-UX) 
+	HP-UX)
 		LIBPATH=$CURRENTDIR/../libswt/hpux/
 		;;
 	CYGWIN*)
@@ -180,11 +180,11 @@ case `uname -s` in
 		exit
 		;;
 
-	*) 
+	*)
 		echo Spoon is not supported on this hosttype : `uname -s`
 		exit
 		;;
-esac 
+esac
 
 export LIBPATH
 
@@ -211,11 +211,14 @@ inputtoexitstatus() {
   return $exitstatus
 }
 
+# might need this to be smarter, if JAVA_HOME is the jre and not the jdk, this might not work. it might require a modified path
+JFXSWT=$JAVA_HOME/jre/lib/jfxswt.jar
+
 OS=`uname -s | tr '[:upper:]' '[:lower:]'`
 if [ $OS = "linux" ]; then
-    (((("$_PENTAHO_JAVA" $OPT -jar "$STARTUP" -lib $LIBPATH "${1+$@}"  2>&1; echo $? >&3 ) | grep -viE "Gtk-WARNING|GLib-GObject|GLib-CRITICAL|^$" >&4 ) 3>&1)| inputtoexitstatus ) 4>&1
+    (((("$_PENTAHO_JAVA" $OPT -jar "$STARTUP" -lib $LIBPATH -classpath $JFXSWT "${1+$@}"  2>&1; echo $? >&3 ) | grep -viE "Gtk-WARNING|GLib-GObject|GLib-CRITICAL|^$" >&4 ) 3>&1)| inputtoexitstatus ) 4>&1
 else
-    "$_PENTAHO_JAVA" $OPT -jar "$STARTUP" -lib $LIBPATH "${1+$@}"
+    "$_PENTAHO_JAVA" $OPT -jar "$STARTUP" -lib $LIBPATH -classpath $JFXSWT "${1+$@}"
 fi
 EXIT_CODE=$?
 

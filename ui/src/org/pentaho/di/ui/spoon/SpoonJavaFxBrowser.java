@@ -10,6 +10,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebHistory;
@@ -51,6 +53,9 @@ public class SpoonJavaFxBrowser implements TabItemInterface {
     forwardButton.setPrefSize(50, 20);
     final Button goButton = new Button( "Go" );
     goButton.setPrefSize(50, 20);
+    final Button copyButton = new Button("Copy");
+    goButton.setPrefSize(50, 20);
+
     urlBar = new TextField();
     urlBar.setPrefSize( 400, 20 );
 
@@ -60,12 +65,14 @@ public class SpoonJavaFxBrowser implements TabItemInterface {
     toolbar.getChildren().add( forwardButton );
     toolbar.getChildren().add( urlBar );
     toolbar.getChildren().add( goButton );
+    toolbar.getChildren().add( copyButton );
     toolbar.setPrefSize( 1000, 30 );
 
     group.getChildren().add( toolbar );
     group.getChildren().add( webView );
     toolbar.setLayoutY( 0 );
     webView.setLayoutY( 30 );
+
 
     final Scene scene = new Scene( group );
     canvas.setScene( scene );
@@ -76,7 +83,7 @@ public class SpoonJavaFxBrowser implements TabItemInterface {
       {
         Double width = (Double) newValue;
         toolbar.setPrefWidth( width.doubleValue() );
-        urlBar.setPrefWidth( width.doubleValue() - 3*50 );
+        urlBar.setPrefWidth( width.doubleValue() - 4*50 );
         webView.setPrefWidth( width.doubleValue() );
       }
     });
@@ -106,6 +113,14 @@ public class SpoonJavaFxBrowser implements TabItemInterface {
     });
 
     goButton.setOnAction( event -> webView.getEngine().load( urlBar.getText() ));
+
+    copyButton.setOnAction( event -> {
+      String copiedText = (String) webView.getEngine().executeScript( "window.getSelection().toString()" );
+      final Clipboard systemClipboard = Clipboard.getSystemClipboard();
+      final ClipboardContent clip = new ClipboardContent();
+      clip.putString( copiedText );
+      systemClipboard.setContent( clip );
+    } );
 
   }
 

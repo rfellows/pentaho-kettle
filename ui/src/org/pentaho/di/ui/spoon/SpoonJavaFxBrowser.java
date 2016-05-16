@@ -73,7 +73,6 @@ public class SpoonJavaFxBrowser implements TabItemInterface {
     toolbar.setLayoutY( 0 );
     webView.setLayoutY( 30 );
 
-
     final Scene scene = new Scene( group );
     canvas.setScene( scene );
 
